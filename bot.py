@@ -16,6 +16,7 @@ Basic Echobot example, repeats messages.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
+import requests
 import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
@@ -41,11 +42,11 @@ def echo(update: Update, context: CallbackContext) -> None:
 
 
 def kurs(update: Update, context: CallbackContext) -> None:
-    # results = crud.parse_kurs()
-    response = ['test', 'kurs']
-    # for kurs in results:
-    #     response.append("{} - beli: {} - jual: {}". format(kurs['bank'], kurs['beli'], kurs['jual']))
-    update.message.reply_text(", ".join(response))
+    response = requests.get('https://wysdi-fastapi.vercel.app/kurs')
+    text = []
+    for kurs in response.json():
+        text.append("{} - beli: {} - jual: {}".format(kurs['bank'], kurs['beli'], kurs['jual']))
+    update.message.reply_text("\n".join(text))
 
 
 def telegram_bot():
@@ -68,8 +69,6 @@ def telegram_bot():
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("kurs", kurs))
 
-
-    # on noncommand i.e message - echo the message on Telegram
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
     # # Start the Bot
