@@ -18,11 +18,16 @@ bot.
 """
 import requests
 import os
+import logging
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 PORT = int(os.environ.get('PORT', 5000))
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
 
+logger = logging.getLogger(__name__)
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
@@ -42,7 +47,7 @@ def echo(update: Update, context: CallbackContext) -> None:
 
 
 def kurs(update: Update, context: CallbackContext) -> None:
-    response = requests.get('https://wysdi-fastapi.vercel.app/kurs')
+    response = requests.get("https://wysdi-fastapi.vercel.app/kurs")
     text = []
     for kurs in response.json():
         text.append("{} - beli: {} - jual: {}".format(kurs['bank'], kurs['beli'], kurs['jual']))
