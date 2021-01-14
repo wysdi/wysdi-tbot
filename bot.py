@@ -48,10 +48,18 @@ def echo(update: Update, context: CallbackContext) -> None:
 
 def kurs(update: Update, context: CallbackContext) -> None:
     response = requests.get("https://wysdi-fastapi.vercel.app/kurs")
-    text = []
-    for kurs in response.json():
-        text.append("{} - beli: {} - jual: {}".format(kurs['bank'], kurs['beli'], kurs['jual']))
-    update.message.reply_text("\n".join(text))
+    texts = []
+    for item in response.json():
+        texts.append("{} - beli: {} - jual: {}".format(item['bank'], item['beli'], item['jual']))
+    update.message.reply_text("\n".join(texts))
+
+
+def kebasa(update: Update, context: CallbackContext) -> None:
+    response = requests.get('https://wysdi-fastapi.vercel.app/kebasa')
+    texts = []
+    for item in response.json():
+        texts.append("{} - {} -  {}".format(item['nama'], item['jenis'], item['harga']))
+    update.message.reply_text("\n".join(texts))
 
 
 def telegram_bot():
@@ -73,6 +81,7 @@ def telegram_bot():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("kurs", kurs))
+    dispatcher.add_handler(CommandHandler("kebasa", kebasa))
 
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
