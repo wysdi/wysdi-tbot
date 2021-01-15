@@ -29,6 +29,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+API_URI = os.environ['API_URI']
+
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update: Update, context: CallbackContext) -> None:
@@ -47,18 +49,18 @@ def echo(update: Update, context: CallbackContext) -> None:
 
 
 def kurs(update: Update, context: CallbackContext) -> None:
-    response = requests.get("https://wysdi-fastapi.vercel.app/kurs")
+    response = requests.get("{}/kurs".format(API_URI))
     texts = []
     for item in response.json():
-        texts.append("{} - beli: {} - jual: {}".format(item['bank'], item['beli'], item['jual']))
+        texts.append("{}: {}".format(item['bank'], item['beli']))
     update.message.reply_text("\n".join(texts))
 
 
 def kebasa(update: Update, context: CallbackContext) -> None:
-    response = requests.get('https://wysdi-fastapi.vercel.app/kebasa')
+    response = requests.get("{}/kebasa".format(API_URI))
     texts = []
     for item in response.json():
-        texts.append("{} - {} -  {}".format(item['nama'], item['jenis'], item['harga']))
+        texts.append("{} :  {}".format(item['nama'], item['harga']))
     update.message.reply_text("\n".join(texts))
 
 
